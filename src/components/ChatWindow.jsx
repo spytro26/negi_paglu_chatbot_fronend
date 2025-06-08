@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Message from './Message';
-
+// rohitnegipagluchatbotbackend-production.up.railway.app
 // The URL for your backend server
-const API_URL = 'https://rohitnegi-paglu-chatbot-backend.onrender.com';
+ const API_URL ="https://rohitnegipagluchatbotbackend-production.up.railway.app";
+// const API_URL  =  "http://localhost:30"
 
 // Initialize the SpeechRecognition object.
 // We make it a ref to prevent re-initialization on every render.
