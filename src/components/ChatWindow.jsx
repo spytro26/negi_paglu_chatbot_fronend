@@ -17,6 +17,9 @@ const ChatWindow = () => {
       parts: [{ text: "hello coder army!" }],
     },
   ]);
+
+  // Modify the toggleRecording function to only record and update the input field
+  // Removed duplicate toggleRecording function
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -105,10 +108,27 @@ const ChatWindow = () => {
     scrollToBottom();
   }, [messages, isLoading, isProcessingAudio]);
 
+  useEffect(() => {
+    if (!isRecording && input.trim()) {
+      // Ensure the input field retains the transcript after recording stops
+      setInput(input);
+    }
+  }, [isRecording]);
+
   // Unified function to send data to the backend
   const sendMessage = async (textToSend, requestVoice) => {
     if (!textToSend.trim()) return;
-
+    // Remove the backend request when stopping the recording
+    if (isRecording) {
+      recognitionRef.current.stop();
+      // Clear the timer manually when user stops recording
+      if (recordingTimerRef.current) {
+      clearTimeout(recordingTimerRef.current);
+      recordingTimerRef.current = null;
+      }
+      setInput(''); // Clear input after stopping recording
+      return; // Exit without sending the message
+    }
     setIsLoading(true);
     if (requestVoice) {
       setIsProcessingAudio(true); // Set processing audio state
@@ -124,7 +144,7 @@ const ChatWindow = () => {
 
       const response = await axios.post(`${API_URL}/chatwithnegi`, {
         history: [...history, userMessage],
-        voice: requestVoice, // <<< Key change: conditional voice request
+     //   voice: requestVoice, // <<< Key change: conditional voice request
       });
 
       const nekoResponse = response.data;
